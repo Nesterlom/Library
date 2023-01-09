@@ -19,7 +19,7 @@ public class Main {
             int id = -1;
             Scanner scan = new Scanner(System.in);
             DBWorker worker = DBWorker.getInstance();
-            var passwordEncoder = new BCryptPasswordEncoder();
+            Printer printer = Printer.getInstance();
 
             System.out.println("___Welcome to database-oriented library___");
 
@@ -63,7 +63,11 @@ public class Main {
                             String password2 = scan.next();
 
                             if (password.equals(password2)) {
-                                worker.createNewAccount(name, password);
+                                if (worker.createNewAccount(name, password)) {
+                                    System.out.println("New account was added");
+                                } else {
+                                    System.out.println("User with such name already exists or something went wrong");
+                                }
                             } else {
                                 System.out.println("Your passwords has not matched, please try again.");
                             }
@@ -90,10 +94,10 @@ public class Main {
 
                     switch (action) {
                         case 0 -> {
-                            worker.showSavedBooks(id);
+                            printer.showSavedBooks(id);
                         }
                         case 1 -> {
-                            worker.showBooks();
+                            printer.showBooks();
                         }
                         case 2 -> {
                             System.out.print("""
@@ -105,10 +109,21 @@ public class Main {
                             worker.findBook();
                         }
                         case 3 -> {
-                            worker.saveBook(id);
+                            System.out.println("Enter id of a book that you want to add:\n" +
+                                    "(if you dont know the id you can type '0' to close this operation and check id in the 'Find book'.)");
+                            if (worker.saveBook(id)) {
+                                System.out.println("You have saved book.");
+                            } else {
+                                System.out.println("Something went wrong or you exited.");
+                            }
                         }
                         case 4 -> {
-                            worker.deleteBook(id);
+                            System.out.println("Enter id of a book that you want to delete or press '0' to exit:");
+                            if (worker.deleteBook(id)) {
+                                System.out.println("You have delete book.");
+                            } else {
+                                System.out.println("Something went wrong or you exited.");
+                            }
                         }
                         case 5 -> {
                             System.out.println("Disconnect from account ");
@@ -128,6 +143,7 @@ public class Main {
 
                                 if (newPassword.equals(newPassword2)) {
                                     worker.setNewPassword(name, newPassword);
+                                    System.out.println("Password was changed.");
                                 }
                             }
                         }

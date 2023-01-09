@@ -6,14 +6,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Searcher {
-
+    private final DBWorker worker = DBWorker.getInstance();
     private final static Inputer inputer = Inputer.getInstance();
     private final static Scanner scan = new Scanner(System.in);
-    private final List<Book> books;
+    private List<Book> books;
+    private final Printer printer = Printer.getInstance();
     private int count = 1;
 
-    public Searcher(List<Book> books) {
-        this.books = books;
+    private volatile static Searcher searcher;
+
+    public synchronized static Searcher getInstance() {
+        if (searcher == null) {
+            searcher = new Searcher();
+        }
+
+        return searcher;
+    }
+
+    private Searcher() {
     }
 
     private void search(Matcher matcher, Book book) {
@@ -22,13 +32,14 @@ public class Searcher {
                 System.out.println("I think you want to find this books:");
             }
 
-            String str = String.format("%d. %s, author - %s. Id - %d", count, book.getName(), book.getAuthor(), book.getId());
-            System.out.println(str);
+            printer.printBook(book);
             count++;
         }
     }
 
     public void chooseStrategyAndFindBook() {
+        books = worker.getBooks();
+
         int method = inputer.input();
 
         switch (method) {

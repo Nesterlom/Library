@@ -5,7 +5,8 @@ import java.util.Scanner;
 public class Inputer {
     private static Inputer inputer;
 
-    private Inputer(){}
+    private Inputer() {
+    }
 
     public int input() {
         //There are some places in Main and DBWorker files, where we need to get some info from keyboard,
@@ -20,7 +21,7 @@ public class Inputer {
     }
 
     public static Inputer getInstance() {
-        if(inputer == null){
+        if (inputer == null) {
             inputer = new Inputer();
         }
 
