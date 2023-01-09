@@ -1,12 +1,11 @@
 package com.library;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.List;
@@ -14,12 +13,14 @@ import java.util.List;
 //Here are some actions connected with database.
 public class DBWorker {
     private final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     private final String URL = System.getenv("my_sql_url");
     private final String USERNAME = System.getenv("my_sql_username");
     private final String PASSWORD = System.getenv("my_sql_pass");
-    private volatile static DBWorker worker;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    private volatile static DBWorker worker;
     private final Inputer inputer = Inputer.getInstance();
 
     {
@@ -37,20 +38,18 @@ public class DBWorker {
         return worker;
     }
 
-    private boolean checkBook(int bookId) {
-        String sql = "select id from books";
-        List<Integer> ids = jdbcTemplate.query(sql, new RowMapper<Integer>() {
-            @Override
-            public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getInt("id");
-            }
-        });
+    private boolean isBookInSavedBooks(int bookId, int userId) {
+        String sql = String.format("select bookId from savedBooks where bookId = %d and userId = %d", bookId, userId);
 
-        if (ids.contains(bookId)) {
-            return true;
+        try {
+            Integer id = (Integer) jdbcTemplate.queryForObject(sql, Integer.class);
+        } catch (EmptyResultDataAccessException e) {
+            return false;
         }
-        return false;
+
+        return true;
     }
+
 
     public int auth(String name, String password) throws SQLException {
         //we check password and name, that entered user, with names and passwords in database.
@@ -61,152 +60,80 @@ public class DBWorker {
             if (passwordEncoder.matches(password, user.getPassword())) {
                 return user.getId();
             }
-        } catch (EmptyResultDataAccessException e) {}
+        } catch (EmptyResultDataAccessException e) {
+        }
+
         return -1;
     }
 
-    public void showSavedBooks(int userId) throws SQLException {
-        //In this method we get JSON file from database, which can say about books that user has saved.
-        if (userId > 0) {
-            String sql = String.format("select bookId from savedBooks where userId = %d", userId);
+    public List<Book> getSavedBooks(int limit, int offset, int userId) {
+        String sql = String.format("select * from books join savedBooks on savedBooks.bookId = books.id where userId = %d limit %d offset %d;", userId, limit, offset);
 
-            List<Integer> ids = jdbcTemplate.query(sql, new RowMapper<Integer>() {
-                @Override
-                public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return rs.getInt("bookId");
-                }
-            });
-
-            if (ids.isEmpty()) {
-                System.out.println("you dont have saved books");
-            } else {
-                for (Integer id : ids) {
-                    String query = String.format("select * from books where id = %d", id);
-                    Book book = (Book) jdbcTemplate.queryForObject(query, new BookMapper());
-                    String str;
-                    if (book.getYear() > 0) {
-                        str = String.format("%d. %s, author - %s", book.getId(), book.getName(), book.getAuthor());
-                    } else {
-                        str = String.format("%d. %s, author - %s. Year - ", book.getId(), book.getName(), book.getAuthor(), book.getYear());
-                    }
-
-                    System.out.println(str);
-                }
-            }
-        }
+        return jdbcTemplate.query(sql, new BookMapper());
     }
 
-    public void showBooks() throws SQLException {
-        //In this method we print 10 books in console.
-        boolean programIsOn = true;
-        int limit = 10;
-        int offset = 0;
-        String str;
+    public List<Book> getBooks() {
+        String query = String.format("select * from books");
 
-        while (programIsOn) {
-            String query = String.format("select * from books limit %s offset %d", limit, offset);
-            int count = 0;
-            List<Book> books = jdbcTemplate.query(query, new BookMapper());
-            for (Book book : books) {
-                int year = book.getYear();
-                if (year != 0) {
-                    str = String.format("id - %d. %s, author - %s, year - %d", book.getId(), book.getName(), book.getAuthor(), year);
-                } else {
-                    str = String.format("id - %d. %s, author - %s", book.getId(), book.getName(), book.getAuthor());
-                }
-                System.out.println(str);
-                count++;
-            }
-            if (count > 0) {
-                System.out.print("""
-                        Are you want to see some more books?
-                        1.Yes.
-                        2.No.
-                        """);
-                int action = inputer.input();
+        return jdbcTemplate.query(query, new BookMapper());
+    }
 
-                switch (action) {
-                    case 1 -> {
-                        limit += 10;
-                        offset += 10;
-                    }
-                    case 2 -> {
-                        programIsOn = false;
-                    }
-                    default -> {
-                        System.out.println("Bad input, please try again.");
-                        programIsOn = false;
-                    }
-                }
-            } else {
-                System.out.println("Books are over.");
-                programIsOn = false;
-            }
-        }
+    public List<Book> getBooks(int limit, int offset) {
+        String query = String.format("select * from books limit %s offset %d", limit, offset);
+
+        return jdbcTemplate.query(query, new BookMapper());
     }
 
 
     public void setNewPassword(String userName, String newPassword) throws SQLException {
-        String query = String.format("update users set password = '%s' where name = '%s'", newPassword, userName);
+        String query = String.format("update users set password = '%s' where name = '%s'", passwordEncoder.encode(newPassword), userName);
 
         jdbcTemplate.execute(query);
-        System.out.println("Password was changed.");
     }
 
     public void findBook() throws SQLException {
         //In this method we use a regular expressions to find book.
         String sql = "select * from books";
-        List<Book> books = jdbcTemplate.query(sql, new BookMapper());
 
-        Searcher searcher = new Searcher(books);
+        Searcher searcher = Searcher.getInstance();
         searcher.chooseStrategyAndFindBook();
     }
 
-    public void saveBook(int userId) throws SQLException {
-        System.out.println("Enter id of a book that you want to add:\n" +
-                "(if you dont know the id you can type '0' to close this operation and check id in the 'Find book'.)");
+    public boolean saveBook(int userId) throws SQLException {
         int bookId = inputer.input();
-        if (bookId != 0) {
-            if (checkBook(bookId)) {
-                String sql2 = String.format("insert into savedBooks(userId, bookId) values (%d, %d)", userId, bookId);
-                jdbcTemplate.execute(sql2);
-                System.out.println("You have saved book.");
-            } else {
-                System.out.println("There are no books with such id.");
+        if (!isBookInSavedBooks(bookId, userId)) {
+            try {
+                String sql = String.format("insert into savedBooks(userId, bookId) values (%d, %d)", userId, bookId);
+                jdbcTemplate.execute(sql);
+                return true;
+            } catch (DataIntegrityViolationException e) {
             }
         }
+        return false;
     }
 
-    public void deleteBook(int userId) throws SQLException {
-        System.out.println("Enter id of a book that you want to delete or press '0' to exit:");
+    public boolean deleteBook(int userId) throws SQLException {
         int bookId = inputer.input();
-        if (bookId != 0) {
-            if (checkBook(bookId)) {
-                String sql2 = String.format("delete from savedBooks where userId = %d and bookId = %d", userId, bookId);
-                jdbcTemplate.execute(sql2);
-                System.out.println("You have delete book.");
-            } else {
-                System.out.println("There are no books with such id.");
-            }
+        if (isBookInSavedBooks(bookId, userId)) {
+            String sql2 = String.format("delete from savedBooks where userId = %d and bookId = %d", userId, bookId);
+            jdbcTemplate.execute(sql2);
+            return true;
         }
+        return false;
     }
 
-    public void createNewAccount(String userName, String password) throws SQLException {
+
+    public boolean createNewAccount(String userName, String password) throws SQLException {
         //Here we add new user to database.
-        String sql = "select name from users";
-        List<String> names = jdbcTemplate.query(sql, new RowMapper<String>() {
-            @Override
-            public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getString("name");
-            }
-        });
+        String sql = String.format("select name from users where name = '%s'", userName);
+        String name = jdbcTemplate.queryForObject(sql, String.class);
 
-        if (names.contains(userName)) {
-            System.out.println("User with such name already exists.");
+        if (!name.isEmpty()) {
+            return false;
         } else {
             String sql2 = String.format("insert into users(name, password) values ('%s', '%s')", userName, passwordEncoder.encode(password));
             jdbcTemplate.execute(sql2);
-            System.out.println("New account was created");
+            return true;
         }
     }
 }
