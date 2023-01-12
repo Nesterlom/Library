@@ -119,4 +119,5 @@ public class Printer {
         System.out.printf("id - %d. %s, author - %s, year - %d\n",
                 book.getId(), book.getName(), book.getAuthor(), book.getYear());
     }
+
 }
