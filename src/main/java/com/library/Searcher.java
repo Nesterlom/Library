@@ -6,13 +6,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Searcher {
-    private final DBWorker worker = DBWorker.getInstance();
+    private final BookRepository bookRepository = BookRepository.getInstance();
     private final static Inputer inputer = Inputer.getInstance();
     private final static Scanner scan = new Scanner(System.in);
-    private List<Book> books;
     private final Printer printer = Printer.getInstance();
     private int count = 1;
-
     private volatile static Searcher searcher;
 
     public synchronized static Searcher getInstance() {
@@ -38,7 +36,6 @@ public class Searcher {
     }
 
     public void chooseStrategyAndFindBook() {
-        books = worker.getBooks();
 
         int method = inputer.input();
 
@@ -59,6 +56,8 @@ public class Searcher {
     }
 
     public void findByName() {
+        List<Book> books = bookRepository.getBooks();
+
         System.out.println("Enter name of book: ");
         String bookName = scan.next();
         Pattern pattern = Pattern.compile(bookName);
@@ -74,6 +73,8 @@ public class Searcher {
     }
 
     public void findByAuthor() {
+        List<Book> books = bookRepository.getBooks();
+
         System.out.println("Enter author: ");
         String author = scan.next();
         count = 1;
@@ -90,6 +91,8 @@ public class Searcher {
     }
 
     public void findByYear() {
+        List<Book> books = bookRepository.getBooks();
+
         System.out.println("Enter year of publishing: ");
         String year = scan.next();
         Pattern pattern = Pattern.compile(year);

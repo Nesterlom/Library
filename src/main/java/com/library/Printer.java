@@ -1,14 +1,15 @@
 package com.library;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Scanner;
 
 public class Printer {
-    private final DBWorker worker = DBWorker.getInstance();
+    private final BookRepository bookRepository = BookRepository.getInstance();
     private final Inputer inputer = Inputer.getInstance();
     private volatile static Printer printer;
-    private boolean programIsOn = true;
-    private int limit = 10;
-    private int offset = 0;
+
+    private int pageNumber;
 
     private Printer() {
     }
@@ -21,55 +22,96 @@ public class Printer {
         return printer;
     }
 
-    private void print(List<Book> books) {
+    public void findBookChooseBar() {
+        System.out.print("""
+                Chose method of finding a book:
+                1.By book name.
+                2.By author.
+                3.By year.
+                """);
+    }
+
+    public void authChoseBar() {
+        System.out.print("""
+                Choose action:
+                1.Enter account.
+                2.End program.
+                3.Create new account.
+                """);
+    }
+
+    public void mainChoseBar() {
+        System.out.print("""
+                Choose action:
+                0.Show saved books.
+                1.Show books from database.
+                2.Find book.
+                3.Save book.
+                4.Delete book.
+                5.Exit from account.
+                6.Change password.
+                7.End program.
+                """);
+    }
+
+    private void print(List<Book> books, int amountOfPages) {
         if (books.isEmpty()) {
             System.out.println("No books.");
-            programIsOn = false;
         } else {
             books.forEach(this::printBook);
+            System.out.println(String.format("You are on %d page. General amount of pages is %d", pageNumber, amountOfPages));
 
             System.out.print("""
-                    Are you want to see some more books?
-                    1.Yes.
-                    2.No.
+                    1.Next page.
+                    2.Previous page.
+                    Print anything to exit.
                     """);
-            int action = inputer.input();
 
+            int action = inputer.input();
             switch (action) {
                 case 1 -> {
-                    limit += 10;
-                    offset += 10;
+                    pageNumber++;
+                    showBooks(pageNumber);
                 }
                 case 2 -> {
-                    programIsOn = false;
-                }
-                default -> {
-                    System.out.println("Bad input, please try again.");
-                    programIsOn = false;
+                    pageNumber--;
+                    showBooks(pageNumber);
                 }
             }
         }
     }
 
-    public void showBooks() {
-        limit = 10;
-        offset = 0;
-        programIsOn = true;
+    public void showBooks(int pageNumber) {
+        if (pageNumber >= 1) {
+            this.pageNumber = pageNumber;
 
-        while (programIsOn) {
-            List<Book> books = worker.getBooks(limit, offset);
-            print(books);
+            BooksContainer booksContainer = bookRepository.getBooks(pageNumber);
+            print(booksContainer.getBooks(), booksContainer.getAmountOfPages());
         }
     }
 
-    public void showSavedBooks(int userId) {
-        limit = 10;
-        offset = 0;
-        programIsOn = true;
+    public void printBookSaved(boolean wasBookSaved){
+        if(wasBookSaved){
+            System.out.println("You have saved book.");
+        } else{
+            System.out.println("Something went wrong or you exited.");
+        }
+    }
 
-        while (programIsOn) {
-            List<Book> books = worker.getSavedBooks(limit, offset, userId);
-            print(books);
+    public void printBookDeleted(boolean wasBookDeleted){
+        if(wasBookDeleted){
+            System.out.println("You have delete book.");
+        } else{
+            System.out.println("Something went wrong or you exited.");
+        }
+    }
+
+    public void showSavedBooks(int pageNumber, int userId) {
+        if (pageNumber >= 1) {
+            this.pageNumber = pageNumber;
+
+            BooksContainer booksContainer = bookRepository.getSavedBooks(pageNumber, userId);
+            print(booksContainer.getBooks(), booksContainer.getAmountOfPages());
         }
     }
 
