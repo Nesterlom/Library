@@ -31,6 +31,8 @@ public class BookRepository {
         return bookRepository;
     }
 
+
+
     private boolean isBookInSavedBooks(int bookId, int userId) {
         String sql = String.format("select bookId from savedBooks where bookId = %d and userId = %d", bookId, userId);
 
@@ -50,9 +52,18 @@ public class BookRepository {
 
         booksContainer.setBooks(books);
         booksContainer.setPageNumber(pageNumber);
-        booksContainer.setAmountOfPages( (int) Math.ceil(books.size() / 10.0));
+        booksContainer.setAmountOfPages( (int) Math.ceil(getAmountOfSavedBooks(userId) / 10.0));
 
         return booksContainer;
+    }
+
+    public int getAmountOfSavedBooks(int userId){
+        String sql = String.format("select count(books.id) from books join savedbooks on books.id = savedBooks.bookId join users on users.id = savedbooks.userId where users.id = %d", userId);
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    public int getAmountOfBooks(){
+        return jdbcTemplate.queryForObject("select count(id) from books", Integer.class);
     }
 
     public List<Book> getBooks() {
@@ -86,7 +97,7 @@ public class BookRepository {
 
         booksContainer.setBooks(books);
         booksContainer.setPageNumber(pageNumber);
-        booksContainer.setAmountOfPages( (int) Math.ceil(books.size() / 10.0));
+        booksContainer.setAmountOfPages( (int) Math.ceil(getAmountOfBooks() / 10.0));
 
         return booksContainer;
     }
@@ -120,5 +131,23 @@ public class BookRepository {
             return true;
         }
         return false;
+    }
+
+    public void saveBook(int userId, int bookId) {
+        if (!isBookInSavedBooks(bookId, userId)) {
+            try {
+                String sql = String.format("insert into savedBooks(userId, bookId) values (%d, %d)", userId, bookId);
+                jdbcTemplate.execute(sql);
+            } catch (DataIntegrityViolationException e) {
+            }
+        }
+
+    }
+
+    public void deleteBook(int userId, int bookId){
+        if (isBookInSavedBooks(bookId, userId)) {
+            String sql = String.format("delete from savedBooks where userId = %d and bookId = %d", userId, bookId);
+            jdbcTemplate.execute(sql);
+        }
     }
 }

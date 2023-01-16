@@ -3,8 +3,6 @@ package com.library;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Searcher {
     private final BookRepository bookRepository = BookRepository.getInstance();
