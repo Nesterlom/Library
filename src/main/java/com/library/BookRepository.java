@@ -35,7 +35,7 @@ public class BookRepository {
         String sql = String.format("select bookId from savedBooks where bookId = %d and userId = %d", bookId, userId);
 
         try {
-            Integer id = (Integer) jdbcTemplate.queryForObject(sql, Integer.class);
+            Integer id = jdbcTemplate.queryForObject(sql, Integer.class);
         } catch (EmptyResultDataAccessException e) {
             return false;
         }
@@ -56,7 +56,25 @@ public class BookRepository {
     }
 
     public List<Book> getBooks() {
-        String query = String.format("select * from books");
+        String query = "select * from books";
+
+        return jdbcTemplate.query(query, new BookMapper());
+    }
+
+    public List<Book> getBooksByName(String name) {
+        String query = "select * from books where name like '%" + name + "%'";
+
+        return jdbcTemplate.query(query, new BookMapper());
+    }
+
+    public List<Book> getBooksByAuthor(String author) {
+        String query = "select * from books where author like '%" + author + "%'";
+
+        return jdbcTemplate.query(query, new BookMapper());
+    }
+
+    public List<Book> getBooksByYear(int year) {
+        String query = String.format("select * from books where year = %d", year);
 
         return jdbcTemplate.query(query, new BookMapper());
     }

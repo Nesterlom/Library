@@ -1,5 +1,6 @@
 package com.library;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -10,7 +11,6 @@ public class Searcher {
     private final static Inputer inputer = Inputer.getInstance();
     private final static Scanner scan = new Scanner(System.in);
     private final Printer printer = Printer.getInstance();
-    private int count = 1;
     private volatile static Searcher searcher;
 
     public synchronized static Searcher getInstance() {
@@ -22,17 +22,6 @@ public class Searcher {
     }
 
     private Searcher() {
-    }
-
-    private void search(Matcher matcher, Book book) {
-        if (matcher.find()) {
-            if (count == 1) {
-                System.out.println("I think you want to find this books:");
-            }
-
-            printer.printBook(book);
-            count++;
-        }
     }
 
     public void chooseStrategyAndFindBook() {
@@ -56,54 +45,42 @@ public class Searcher {
     }
 
     public void findByName() {
-        List<Book> books = bookRepository.getBooks();
-
         System.out.println("Enter name of book: ");
         String bookName = scan.next();
-        Pattern pattern = Pattern.compile(bookName);
-        count = 1;
+        List<Book> books = bookRepository.getBooksByName(bookName);
 
-        for (Book book : books) {
-            Matcher matcher = pattern.matcher(book.getName());
-            search(matcher, book);
-        }
-        if (count == 1) {
+        if(books.isEmpty()){
             System.out.println("No results.");
+        }else{
+            books.forEach(printer::printBook);
         }
     }
 
     public void findByAuthor() {
-        List<Book> books = bookRepository.getBooks();
-
-        System.out.println("Enter author: ");
+        System.out.println("Enter author of book: ");
         String author = scan.next();
-        count = 1;
+        List<Book> books = bookRepository.getBooksByAuthor(author);
 
-        Pattern pattern = Pattern.compile(author);
-
-        for (Book book : books) {
-            Matcher matcher = pattern.matcher(book.getAuthor());
-            search(matcher, book);
-        }
-        if (count == 1) {
+        if(books.isEmpty()){
             System.out.println("No results.");
+        }else{
+            books.forEach(printer::printBook);
         }
     }
 
     public void findByYear() {
-        List<Book> books = bookRepository.getBooks();
-
         System.out.println("Enter year of publishing: ");
-        String year = scan.next();
-        Pattern pattern = Pattern.compile(year);
-        count = 1;
+        int year = scan.nextInt();
+        try{
+        List<Book> books = bookRepository.getBooksByYear(year);
 
-        for (Book book : books) {
-            Matcher matcher = pattern.matcher(String.valueOf(book.getYear()));
-            search(matcher, book);
-        }
-        if (count == 1) {
+        if(books.isEmpty()){
             System.out.println("No results.");
+        }else{
+            books.forEach(printer::printBook);
+        }}
+        catch (InputMismatchException e){
+            System.out.println("Wrong input");
         }
     }
 
