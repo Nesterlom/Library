@@ -4,9 +4,12 @@ import com.library.Book;
 import com.library.BookRepository;
 import com.library.BooksContainer;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -16,6 +19,14 @@ import java.util.List;
 @RequestMapping("/books")
 public class BookController {
     BookRepository bookRepository = BookRepository.getInstance();
+
+    @Autowired
+    BookRepo bookRepo;
+
+    @GetMapping("/show")
+    public @ResponseBody Iterable<Book> show(){
+        return bookRepo.findAll();
+    }
 
     @GetMapping("/{page}")
     public BooksContainer getBooks(@PathVariable int page) {
