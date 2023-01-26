@@ -1,8 +1,10 @@
-package com.library;
+package com.library.service;
 
-import java.sql.SQLException;
+import com.library.BookRepository;
+import com.library.BooksContainer;
+import com.library.entity.Book;
+
 import java.util.List;
-import java.util.Scanner;
 
 public class Printer {
     private final BookRepository bookRepository = BookRepository.getInstance();

@@ -1,5 +1,6 @@
 package com.library;
 
+import com.library.entity.Book;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

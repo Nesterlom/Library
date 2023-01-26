@@ -1,13 +1,11 @@
 package com.library;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import com.library.entity.Book;
+import com.library.entity.User;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserMapper implements RowMapper {
     User user = new User();

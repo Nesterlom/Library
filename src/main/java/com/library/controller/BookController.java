@@ -1,15 +1,16 @@
-package com.library.service;
+package com.library.controller;
 
-import com.library.Book;
 import com.library.BookRepository;
 import com.library.BooksContainer;
+import com.library.repository.BookRepo;
+import com.library.entity.Book;
+import com.library.service.FindBy;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class BookController {
     BookRepo bookRepo;
 
     @GetMapping("/show")
-    public @ResponseBody Iterable<Book> show(){
+    public Iterable<Book> show(){
         return bookRepo.findAll();
     }
 
@@ -34,23 +35,26 @@ public class BookController {
     }
 
     @GetMapping("/{id}/{page}")
-    public BooksContainer getSavedBooks(@PathVariable int id, @PathVariable int page) {
-        return bookRepository.getSavedBooks(page, id);
+    public BooksContainer getSavedBooks(@PathVariable int userId, @PathVariable int page) {
+        return bookRepository.getSavedBooks(page, userId);
     }
 
-    @GetMapping("/bookName/{name}")
-    public List<Book> getBooksByName(@PathVariable String name) {
-        return bookRepository.getBooksByName(name);
-    }
-
-    @GetMapping("/bookAuthor/{author}")
-    public List<Book> getBooksByAuthor(@PathVariable String author) {
-        return bookRepository.getBooksByAuthor(author);
-    }
-
-    @GetMapping("/bookYear/{year}")
-    public List<Book> getBooksByYear(@PathVariable int year) {
-        return bookRepository.getBooksByYear(year);
+    @GetMapping("/find")
+    public List<Book> find(@RequestParam(value = "findBy") FindBy method,
+                           @RequestParam(value = "param") String param) {
+        switch (method){
+            case NAME -> {
+                return bookRepo.findByName(param);
+                //return bookRepository.getBooksByName(param);
+            }
+            case AUTHOR -> {
+                return bookRepository.getBooksByAuthor(param);
+            }
+            case YEAR -> {
+                return bookRepository.getBooksByYear(Integer.parseInt(param));
+            }
+        }
+        return null;
     }
 
     @GetMapping("/add/{userId}/{bookId}")

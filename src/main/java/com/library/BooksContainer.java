@@ -1,5 +1,6 @@
 package com.library;
 
+import com.library.entity.Book;
 import lombok.Data;
 
 import java.util.List;

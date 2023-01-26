@@ -1,6 +1,10 @@
-package com.library.service;
+package com.library.controller;
 
 import com.library.UserRepository;
+import com.library.entity.Book;
+import com.library.entity.User;
+import com.library.repository.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +17,14 @@ import java.sql.SQLException;
 public class UserController {
 
     UserRepository userRepository = UserRepository.getInstance();
+
+    @Autowired
+    UserRepo userRepo;
+
+    @GetMapping("/show")
+    public Iterable<User> show(){
+        return userRepo.findAll();
+    }
 
     @GetMapping("/createAcc/{name}/{password}")
     public void createAccount(@PathVariable String name,

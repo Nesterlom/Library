@@ -1,13 +1,15 @@
-package com.library;
+package com.library.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Value;
 
 @Entity
+@Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +27,7 @@ public class Book {
         this.year = year;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
