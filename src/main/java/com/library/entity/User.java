@@ -1,6 +1,5 @@
 package com.library.entity;
 
-import com.library.entity.Book;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +18,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
     private String name;
     private String password;
 
@@ -31,12 +30,12 @@ public class User {
         savedBooks.add(book);
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id = Long.valueOf(id);
     }
 
     public String getName() {

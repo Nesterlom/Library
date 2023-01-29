@@ -39,7 +39,7 @@ public class UserRepository {
             User user = (User) jdbcTemplate.queryForObject(sql, new UserMapper());
 
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return user.getId();
+                return Math.toIntExact(user.getId());
             }
         } catch (EmptyResultDataAccessException e) {}
 

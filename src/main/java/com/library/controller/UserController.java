@@ -29,17 +29,13 @@ public class UserController {
     @GetMapping("/createAcc/{name}/{password}")
     public void createAccount(@PathVariable String name,
                               @PathVariable String password){
-        try {
-            userRepository.createNewAccount(name, password);
-        } catch (SQLException e) {}
+        userRepo.createAccount(name, password);
     }
 
     @GetMapping("/changePass/{userId}/{newPassword}")
     public void changePassword(@PathVariable int userId,
                                @PathVariable String newPassword){
 
-        try {
-            userRepository.setNewPassword(userId, newPassword);
-        } catch (SQLException e) {}
+        userRepo.changePassword(userId, newPassword);
     }
 }

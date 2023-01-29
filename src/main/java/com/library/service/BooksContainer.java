@@ -1,4 +1,4 @@
-package com.library;
+package com.library.service;
 
 import com.library.entity.Book;
 import lombok.Data;

@@ -13,7 +13,7 @@ import lombok.Value;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
     private String name;
     private String author;
     private Integer year;
@@ -27,12 +27,12 @@ public class Book {
         this.year = year;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id = Long.valueOf(id);
     }
 
     public String getName() {
