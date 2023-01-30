@@ -1,41 +1,30 @@
 package com.library.repository;
 
 import com.library.entity.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface BookRepo extends CrudRepository<Book, Long> {
+public interface BookRepo extends PagingAndSortingRepository<Book, Long> {
+    List<Book> findBookByNameContaining(String name);
 
-    @Query(value = "select * from books where name like %?1%",
-            nativeQuery = true)
-    List<Book> findByName(String name);
-
-    @Query(value = "select * from books where author like %?1%",
-            nativeQuery = true)
-    List<Book> findByAuthor(String author);
+    List<Book> findBookByAuthorContaining(String author);
 
     List<Book> findByYear(Integer year);
 
-    @Query(value = "select count(id) from books",
-            nativeQuery = true)
-    int getAmountOfBooks();
+    @Override
+    Page<Book> findAll(Pageable pageable);
 
-    @Query(value = "select count(savedbooks.bookId) from savedbooks where userId = 10;",
+    @Query(value = "select books.id, books.name, books.author, books.year from books join savedbooks on savedbooks.bookId = books.id where savedbooks.userId = ?1;",
+            countQuery = "SELECT count(*) FROM books join savedbooks on savedbooks.bookId = books.id where savedbooks.userId = ?1;",
             nativeQuery = true)
-    int getAmountOfSavedBooks(int userId);
-
-    @Query(value = "select * from books limit ?1 offset ?2",
-            nativeQuery = true)
-    List<Book> getBooks(int limit, int offset);
-
-    @Query(value = "select id, name, author, year from books join savedBooks on savedBooks.bookId = books.id where userId = ?1 limit ?2 offset ?3",
-            nativeQuery = true)
-    List<Book> getSavedBooks(int userId, int limit, int offset);
+    Page<Book> findAllByUserId(int userId, Pageable pageable);
 
     @Modifying
     @Query(value = "delete from savedbooks where userId = ?1 and bookId = ?2",

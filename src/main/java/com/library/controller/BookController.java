@@ -1,12 +1,14 @@
 package com.library.controller;
 
-import com.library.BookRepository;
-import com.library.service.BooksContainer;
-import com.library.repository.BookRepo;
 import com.library.entity.Book;
+import com.library.repository.BookRepo;
 import com.library.service.FindBy;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,45 +28,25 @@ public class BookController {
         this.bookRepo = bookRepo;
     }
 
-    @GetMapping("/show")
-    public List<Book> showAll(){
-        return (List<Book>) bookRepo.findAll();
+    @GetMapping()
+    public Page<Book> getBooks(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        return bookRepo.findAll(pageable);
     }
 
-    @GetMapping("/{page}")
-    public BooksContainer getBooks(@PathVariable int page) {
-        int limit = page * 10;
-        int offset = limit - 10;
-
-        BooksContainer bc = new BooksContainer();
-        bc.setBooks(bookRepo.getBooks(limit, offset));
-        bc.setPageNumber(page);
-        bc.setAmountOfPages( (int) Math.ceil(bookRepo.getAmountOfBooks() / 10.0));
-        return bc;
-    }
-
-    @GetMapping("/{userId}/{page}")
-    public BooksContainer getSavedBooks(@PathVariable int page, @PathVariable int userId) {
-        int limit = page * 10;
-        int offset = limit - 10;
-
-        BooksContainer bc = new BooksContainer();
-        bc.setBooks(bookRepo.getSavedBooks(userId, limit, offset));
-        bc.setPageNumber(page);
-        bc.setAmountOfPages( (int) Math.ceil(bookRepo.getAmountOfSavedBooks(userId) / 10.0));
-
-        return bc;
+    @GetMapping("/{userId}")
+    public Page<Book> getSavedBooks(@PathVariable int userId, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        return bookRepo.findAllByUserId(userId, pageable);
     }
 
     @GetMapping("/find")
     public List<Book> find(@RequestParam(value = "findBy") FindBy method,
                            @RequestParam(value = "param") String param) {
-        switch (method){
+        switch (method) {
             case NAME -> {
-                return bookRepo.findByName(param);
+                return bookRepo.findBookByNameContaining(param);
             }
             case AUTHOR -> {
-                return bookRepo.findByAuthor(param);
+                return bookRepo.findBookByAuthorContaining(param);
             }
             case YEAR -> {
                 return bookRepo.findByYear(Integer.parseInt(param));
@@ -77,7 +59,7 @@ public class BookController {
     @PostMapping("/add/{userId}/{bookId}")
     public void saveBook(@PathVariable Integer userId,
                          @PathVariable Integer bookId,
-                           HttpServletResponse response) {
+                         HttpServletResponse response) {
         bookRepo.saveBook(userId, bookId);
 
         try {
@@ -90,8 +72,8 @@ public class BookController {
     @Transactional
     @PostMapping("/delete/{userId}/{bookId}")
     public void deleteBook(@PathVariable Integer userId,
-                             @PathVariable Integer bookId,
-                             HttpServletResponse response){
+                           @PathVariable Integer bookId,
+                           HttpServletResponse response) {
         bookRepo.deleteBook(userId, bookId);
 
         try {
