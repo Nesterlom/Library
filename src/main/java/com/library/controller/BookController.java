@@ -5,7 +5,8 @@ import com.library.service.BooksContainer;
 import com.library.repository.BookRepo;
 import com.library.entity.Book;
 import com.library.service.FindBy;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,19 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/books")
 public class BookController {
-    BookRepository bookRepository = BookRepository.getInstance();
+    private final BookRepo bookRepo;
 
-    @Autowired
-    BookRepo bookRepo;
+    public BookController(BookRepo bookRepo) {
+        this.bookRepo = bookRepo;
+    }
 
     @GetMapping("/show")
-    public Iterable<Book> showAll(){
-        return bookRepo.findAll();
+    public List<Book> showAll(){
+        return (List<Book>) bookRepo.findAll();
     }
 
     @GetMapping("/{page}")
@@ -70,18 +73,31 @@ public class BookController {
         return null;
     }
 
+    @Transactional
     @PostMapping("/add/{userId}/{bookId}")
-    public String saveBook(@PathVariable Integer userId,
-                         @PathVariable Integer bookId) {
+    public void saveBook(@PathVariable Integer userId,
+                         @PathVariable Integer bookId,
+                           HttpServletResponse response) {
         bookRepo.saveBook(userId, bookId);
 
-        return null;
+        try {
+            response.sendRedirect(String.format("/books/%d/1", userId));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    @Transactional
     @PostMapping("/delete/{userId}/{bookId}")
     public void deleteBook(@PathVariable Integer userId,
-                           @PathVariable Integer bookId) {
+                             @PathVariable Integer bookId,
+                             HttpServletResponse response){
         bookRepo.deleteBook(userId, bookId);
 
+        try {
+            response.sendRedirect(String.format("/books/%d/1", userId));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

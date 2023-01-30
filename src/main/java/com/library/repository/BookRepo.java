@@ -4,10 +4,11 @@ import com.library.entity.Book;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface BookRepo extends CrudRepository<Book, Long> {
 
     @Query(value = "select * from books where name like %?1%",
@@ -42,7 +43,8 @@ public interface BookRepo extends CrudRepository<Book, Long> {
     void deleteBook(Integer userId, Integer bookId);
 
     @Modifying
-    @Query(value = "insert into savedBooks(userId, bookId) values (:userId, :bookId)",
+    @Query(value = "insert into savedBooks(userId, bookId) values (?1, ?2)",
             nativeQuery = true)
-    void saveBook(@Param("userId") Integer userId, @Param("bookId") Integer bookId);
+    void saveBook(Integer userId, Integer bookId);
+
 }

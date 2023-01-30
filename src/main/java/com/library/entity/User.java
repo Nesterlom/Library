@@ -8,17 +8,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
     private String name;
     private String password;
 
@@ -28,38 +34,6 @@ public class User {
     private List<Book> savedBooks = new ArrayList<>();
     public void addBook(Book book){
         savedBooks.add(book);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = Long.valueOf(id);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Book> getSavedBooks() {
-        return savedBooks;
-    }
-
-    public void setSavedBooks(List<Book> savedBooks) {
-        this.savedBooks = savedBooks;
     }
 }
 
