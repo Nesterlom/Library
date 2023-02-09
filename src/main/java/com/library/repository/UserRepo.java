@@ -21,8 +21,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
     void createAccount(String name, String password);
 
     @Modifying
-    @Query(value = "update users set password = ?2 where id = ?1",
+    @Query(value = "update users set password = ?2 where name = ?1",
             nativeQuery = true)
-    void changePassword(int userId, String password);
-
+    void changePassword(String username, String password);
 }

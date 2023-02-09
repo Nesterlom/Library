@@ -13,6 +13,7 @@ public class Inputer {
         //so this actions here.
         Scanner scan = new Scanner(System.in);
         String str = scan.next();
+
         try {
             return Integer.parseInt(str);
         } catch (NumberFormatException ignored) {

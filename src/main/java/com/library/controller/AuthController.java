@@ -1,11 +1,9 @@
 package com.library.controller;
 
-import com.library.UserRepository;
 import com.library.entity.User;
 import com.library.repository.UserRepo;
-import jakarta.transaction.Transactional;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +20,8 @@ public class AuthController {
         this.userRepo = userRepo;
     }
 
-    @GetMapping
+    @PostMapping
+    @ApiOperation("Authenticate")
     public User auth(@RequestParam(value = "name") String name,
                      @RequestParam(value = "password") String password){
         return userRepo.findUserByName(name);
