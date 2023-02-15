@@ -25,9 +25,5 @@ public class AuthController {
     public User auth(@RequestParam(value = "name") String name,
                      @RequestParam(value = "password") String password){
         return userRepo.findUserByName(name);
-//        if(passwordEncoder.matches(password, user.getPassword())){
-//            return user;
-//        }
-//        return null;
     }
 }
