@@ -1,5 +1,8 @@
 package com.library;
 
+import com.library.service.Inputer;
+import com.library.service.Printer;
+
 import java.sql.SQLException;
 import java.util.Scanner;
 

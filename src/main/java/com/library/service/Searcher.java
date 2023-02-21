@@ -1,10 +1,11 @@
-package com.library;
+package com.library.service;
+
+import com.library.BookRepository;
+import com.library.entity.Book;
 
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Searcher {
     private final BookRepository bookRepository = BookRepository.getInstance();

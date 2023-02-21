@@ -1,6 +1,6 @@
 package com.library;
 
-import com.fasterxml.jackson.core.JsonToken;
+import com.library.entity.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -39,11 +39,26 @@ public class UserRepository {
             User user = (User) jdbcTemplate.queryForObject(sql, new UserMapper());
 
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return user.getId();
+                return Math.toIntExact(user.getId());
             }
         } catch (EmptyResultDataAccessException e) {}
 
         return -1;
+    }
+
+    public User checkUser(String name, String password){
+        User user;
+        try {
+            String sql = String.format("select * from users left join savedBooks on id = savedBooks.userId left join books on savedBooks.bookId = books.id where users.name = '%s';", name);
+            user = (User) jdbcTemplate.queryForObject(sql, new UserMapper());
+
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                user.setPassword(password);
+                return user;
+            }
+        } catch (EmptyResultDataAccessException e) {}
+
+        return null;
     }
 
     public void setNewPassword(int userId, String newPassword) throws SQLException {
@@ -55,14 +70,18 @@ public class UserRepository {
     public boolean createNewAccount(String userName, String password) throws SQLException {
         //Here we add new user to database.
         String sql = String.format("select name from users where name = '%s'", userName);
-        String name = jdbcTemplate.queryForObject(sql, String.class);
+        String name = "";
 
-        if (!name.isEmpty()) {
-            return false;
-        } else {
-            String sql2 = String.format("insert into users(name, password) values ('%s', '%s')", userName, passwordEncoder.encode(password));
-            jdbcTemplate.execute(sql2);
-            return true;
+        try{
+            name = jdbcTemplate.queryForObject(sql, String.class);
         }
+        catch (EmptyResultDataAccessException e){
+            if (name.isEmpty()) {
+                String sql2 = String.format("insert into users(name, password) values ('%s', '%s')", userName, passwordEncoder.encode(password));
+                jdbcTemplate.execute(sql2);
+                return true;
+            }
+        }
+        return false;
     }
 }
