@@ -35,5 +35,4 @@ public interface BookRepo extends PagingAndSortingRepository<Book, Long> {
     @Query(value = "insert into savedBooks(userId, bookId) values (?1, ?2)",
             nativeQuery = true)
     void saveBook(Integer userId, Integer bookId);
-
 }

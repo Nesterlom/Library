@@ -22,13 +22,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
 @Api(description = "Controller to work with books.")
 public class BookController {
     private final BookRepo bookRepo;
+
+    @GetMapping("/test")
+    public String testBookController(){
+        return "Controller works.";
+    }
 
     @GetMapping()
     @ApiOperation("Get one page of books")
