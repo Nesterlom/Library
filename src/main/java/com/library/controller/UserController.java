@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserRepo userRepo;
+
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserController(UserRepo userRepo) {
@@ -26,6 +26,7 @@ public class UserController {
     @PostMapping("/createAcc")
     @ApiOperation("Create new account")
     public void createAccount(@RequestBody Params params) {
+        System.out.println("Works");
         userRepo.createAccount(params.getUsername(), passwordEncoder.encode(params.getPassword()));
     }
 

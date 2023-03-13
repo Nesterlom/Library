@@ -1,6 +1,7 @@
 package com.library.repository;
 
 import com.library.entity.Book;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +20,7 @@ public interface BookRepo extends PagingAndSortingRepository<Book, Long> {
     List<Book> findByYear(Integer year);
 
     @Override
+    @NotNull
     Page<Book> findAll(Pageable pageable);
 
     @Query(value = "select books.id, books.name, books.author, books.year from books join savedbooks on savedbooks.bookId = books.id where savedbooks.userId = ?1;",

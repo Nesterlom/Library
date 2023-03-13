@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
-@Api(description = "Controller to work with books.")
+@Api("Controller to work with books.")
 public class BookController {
     private final BookRepo bookRepo;
 

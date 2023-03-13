@@ -32,8 +32,5 @@ public class User {
     @JoinTable(name = "savedbooks", joinColumns = @JoinColumn (name = "userId"),
     inverseJoinColumns = @JoinColumn(name = "bookId"))
     private List<Book> savedBooks = new ArrayList<>();
-    public void addBook(Book book){
-        savedBooks.add(book);
-    }
 }
 
