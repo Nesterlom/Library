@@ -22,15 +22,16 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String name;
     private String password;
 
-    @ManyToMany
-    @JoinTable(name = "savedbooks", joinColumns = @JoinColumn (name = "userId"),
-    inverseJoinColumns = @JoinColumn(name = "bookId"))
-    private List<Book> savedBooks = new ArrayList<>();
+//    @ManyToMany
+//    @JoinTable(name = "savedbooks", joinColumns = @JoinColumn (name = "userId"),
+//    inverseJoinColumns = @JoinColumn(name = "bookId"))
+//    private List<Book> savedBooks = new ArrayList<>();
 }
 

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +23,15 @@ public class UserController {
         this.userRepo = userRepo;
     }
 
+    @PostMapping("/test")
+    public String test(){
+        return "Users works";
+    }
+
     @Transactional
     @PostMapping("/createAcc")
     @ApiOperation("Create new account")
     public void createAccount(@RequestBody Params params) {
-        System.out.println("Works");
         userRepo.createAccount(params.getUsername(), passwordEncoder.encode(params.getPassword()));
     }
 
