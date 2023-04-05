@@ -4,6 +4,8 @@ import com.library.repository.UserRepo;
 import com.library.service.Params;
 import io.swagger.annotations.ApiOperation;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +25,6 @@ public class UserController {
         this.userRepo = userRepo;
     }
 
-    @PostMapping("/test")
-    public String test(){
-        return "Users works";
-    }
-
     @Transactional
     @PostMapping("/createAcc")
     @ApiOperation("Create new account")
@@ -39,6 +36,7 @@ public class UserController {
     @PostMapping("/changePass")
     @ApiOperation("Change users password")
     public void changePassword(@RequestBody Params params) {
-        userRepo.changePassword(params.getUsername(), passwordEncoder.encode(params.getPassword()));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        userRepo.changePassword(auth.getName(), passwordEncoder.encode(params.getPassword()));
     }
 }

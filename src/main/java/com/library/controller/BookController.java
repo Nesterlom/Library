@@ -29,11 +29,6 @@ import java.util.List;
 public class BookController {
     private final BookRepo bookRepo;
 
-    @GetMapping("/test")
-    public String testBookController(){
-        return "Controller works.";
-    }
-
     @GetMapping()
     @ApiOperation("Get one page of books")
     public Page<Book> getBooks(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
