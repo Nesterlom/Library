@@ -15,13 +15,18 @@ import java.util.List;
 public interface BookRepo extends PagingAndSortingRepository<Book, Long> {
     List<Book> findBookByNameContaining(String name);
 
-    List<Book> findBookByAuthorContaining(String author);
+    //List<Book> findBookByAuthorContaining(String author);
 
     List<Book> findByYear(Integer year);
 
-    @Override
-    @NotNull
+//    @Override
+//    @NotNull
     Page<Book> findAll(Pageable pageable);
+
+//    @Query(value = "select books.id, books.name, books.author, books.year, author.name from books join books_authors on books.id = books_authors.bookId join authors where authors.id = books_authors.authorId;",
+////            countQuery = "SELECT count(*) FROM books join savedbooks on savedbooks.bookId = books.id where savedbooks.userId = ?1;",
+//            nativeQuery = true)
+//    Page<Book> findAllTest(Pageable pageable);
 
     @Query(value = "select books.id, books.name, books.author, books.year from books join savedbooks on savedbooks.bookId = books.id where savedbooks.userId = ?1;",
             countQuery = "SELECT count(*) FROM books join savedbooks on savedbooks.bookId = books.id where savedbooks.userId = ?1;",

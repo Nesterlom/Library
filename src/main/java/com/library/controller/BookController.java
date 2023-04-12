@@ -50,7 +50,7 @@ public class BookController {
                 return bookRepo.findBookByNameContaining(param);
             }
             case AUTHOR -> {
-                return bookRepo.findBookByAuthorContaining(param);
+                //return bookRepo.findBookByAuthorContaining(param);
             }
             case YEAR -> {
                 return bookRepo.findByYear(Integer.parseInt(param));
@@ -67,11 +67,11 @@ public class BookController {
                          HttpServletResponse response) {
         bookRepo.saveBook(userId, bookId);
 
-        try {
-            response.sendRedirect(String.format("/books/%d/1", userId));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            response.sendRedirect(String.format("/books/%d/1", userId));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Transactional
@@ -82,10 +82,10 @@ public class BookController {
                            HttpServletResponse response) {
         bookRepo.deleteBook(userId, bookId);
 
-        try {
-            response.sendRedirect(String.format("/books/%d/1", userId));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            response.sendRedirect(String.format("/books/%d/1", userId));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }
