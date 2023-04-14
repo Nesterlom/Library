@@ -1,5 +1,6 @@
 package com.library.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +27,8 @@ public class Book {
     private Integer id;
     private String name;
 
-    @ManyToMany
+    @ManyToMany(cascade =  CascadeType.REMOVE)
+    @JsonIgnoreProperties(value = "books")
     @JoinTable(
             name = "books_authors",
             joinColumns = @JoinColumn(name = "book_id"),

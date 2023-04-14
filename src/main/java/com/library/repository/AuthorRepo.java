@@ -18,11 +18,11 @@ public interface AuthorRepo extends CrudRepository<Author, Integer> {
     @Query(value = "insert into authors(name, year) values (?1, ?2)", nativeQuery = true)
     void save(String name, int year);
 
-    @Modifying
-    @Query(value = "update authors set name = ?2 where name = ?1;", nativeQuery = true)
-    void updateName(String name, String newName);
-
-    //@Modifying
-    @Query(value = "update authors set year = ?2 where name = ?1;", nativeQuery = true)
-    int updateYear(String name, Integer newYear);
+//    @Modifying
+//    @Query(value = "update authors set name = ?2 where name = ?1;", nativeQuery = true)
+//    void updateName(String name, String newName);
+//
+//    //@Modifying
+//    @Query(value = "update authors set year = ?2 where name = ?1;", nativeQuery = true)
+//    int updateYear(String name, Integer newYear);
 }

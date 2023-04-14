@@ -32,24 +32,24 @@ public class AuthorController {
 
     @Transactional
     @PostMapping("/insert/{authorName}/{year}")
-    public void insertAuthor(@PathVariable String authorName, @PathVariable int year){
+    public void addAuthor(@PathVariable String authorName, @PathVariable int year){
         repo.save(authorName, year);
     }
 
-    @Transactional
-    @PostMapping("/update")
-    public void updateAuthor(@RequestParam(value = "field") AuthorFields field,
-                             @RequestParam(value = "name") String name,
-                             @RequestParam(value = "param") String param){
-        switch (field){
-            case NAME -> {
-                repo.updateName(name, param);
-            }
-            case YEAR -> {
-                repo.updateYear(name, Integer.parseInt(param));
-            }
-        }
-    }
+//    @Transactional
+//    @PostMapping("/update")
+//    public void updateAuthor(@RequestParam(value = "field") AuthorFields field,
+//                             @RequestParam(value = "name") String name,
+//                             @RequestParam(value = "param") String param){
+//        switch (field){
+//            case NAME -> {
+//                repo.updateName(name, param);
+//            }
+//            case YEAR -> {
+//                repo.updateYear(name, Integer.parseInt(param));
+//            }
+//        }
+//    }
 
     @Transactional
     @DeleteMapping("/delete/{authorName}")
