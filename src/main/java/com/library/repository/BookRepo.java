@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -40,4 +41,12 @@ public interface BookRepo extends PagingAndSortingRepository<Book, Long> {
     void addBook(String name, int year);
 
     void deleteBookByName(String name);
+
+    @Query(value = "select * from books order by id desc limit 1;", nativeQuery = true)
+    int getLastId();
+
+    @Modifying
+    @Query(value = "insert into books_authors(book_id, author_id) values (?1, ?2)",
+            nativeQuery = true)
+    void addAuthorToBook(Integer bookId, Integer authorId);
 }
