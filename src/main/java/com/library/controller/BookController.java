@@ -26,14 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books")
 @RequiredArgsConstructor
 @Api("Controller to work with books.")
 public class BookController {
     private final BookRepo bookRepo;
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
     @GetMapping()
     @ApiOperation("Get one page of books")
