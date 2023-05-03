@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface AuthorRepo extends JpaRepository<Author, Integer> {
 
-    List<Author> findAll(Pageable pageable);
+    List<Author> findAll();
 
     void deleteAuthorById(int id);
 

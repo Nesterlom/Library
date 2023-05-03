@@ -10,11 +10,13 @@ import com.library.service.FindBy;
 import com.library.service.Params;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.expression.ParseException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +37,7 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
+
     @GetMapping("")
     public Page<Author> showAuthors(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable){
         return repo.findAll(pageable);
@@ -42,8 +45,8 @@ public class AuthorController {
 
     @Transactional
     @PostMapping("/add")
-    public void addAuthor(@RequestBody AuthorDTO params){
-        authorService.save(params);
+    public void addAuthor(@RequestBody AuthorDTO authorDto){
+        authorService.save(authorDto);
     }
 
 //    @Transactional
@@ -69,4 +72,5 @@ public class AuthorController {
     public void deleteAuthor(@PathVariable int id){
         repo.deleteAuthorById(id);
     }
+
 }
