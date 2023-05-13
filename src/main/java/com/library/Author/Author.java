@@ -1,6 +1,7 @@
-package com.library.entity;
+package com.library.Author;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.library.Book.Book;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

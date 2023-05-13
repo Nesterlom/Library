@@ -1,11 +1,7 @@
-package com.library.service;
+package com.library.Author;
 
-import com.library.entity.Author;
-import com.library.repository.AuthorRepo;
-import com.library.repository.BookRepo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +15,7 @@ public class AuthorService {
 
     public void save(AuthorDTO authorDto){
         repo.save(convertToEntity(authorDto));
+
         //Author author = new Author();
         //repo.save(author);
     }

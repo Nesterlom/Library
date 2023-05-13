@@ -1,15 +1,9 @@
-package com.library.controller;
+package com.library.Book;
 
-import com.library.entity.Book;
-import com.library.repository.BookRepo;
-import com.library.service.BookParams;
-import com.library.service.BookService;
-import com.library.service.FindBy;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -68,7 +62,7 @@ public class BookController {
                            @PathVariable Integer bookId) {
         bookRepo.deleteBook(userId, bookId);
     }
-    //😊
+
     @Transactional
     @PostMapping("/add")
     public void addBook(@RequestBody BookParams params){
@@ -79,5 +73,10 @@ public class BookController {
     @DeleteMapping("/delete/{bookName}")
     public void deleteBook(@PathVariable String bookName){
         bookRepo.deleteBookByName(bookName);
+    }
+
+    @PostMapping("/update")
+    public void updateBook(@RequestBody BookDTO bookDto){
+
     }
 }

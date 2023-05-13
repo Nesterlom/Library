@@ -1,5 +1,6 @@
-package com.library.entity;
+package com.library.User;
 
+import com.library.Book.Book;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,12 +27,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
+    private String login;
     private String password;
+    private String name;
+    private String surname;
 
-//    @ManyToMany
-//    @JoinTable(name = "savedbooks", joinColumns = @JoinColumn (name = "userId"),
-//    inverseJoinColumns = @JoinColumn(name = "bookId"))
-//    private List<Book> savedBooks = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "savedbooks", joinColumns = @JoinColumn (name = "userId"),
+    inverseJoinColumns = @JoinColumn(name = "bookId"))
+    private List<Book> savedBooks = new ArrayList<>();
 }
 

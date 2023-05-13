@@ -1,7 +1,7 @@
-package com.library.service;
+package com.library.Book;
 
-import com.library.entity.Author;
-import com.library.entity.Book;
+import com.library.Author.Author;
+import com.library.Book.Book;
 import lombok.Data;
 
 import java.util.List;

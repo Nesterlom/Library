@@ -21,8 +21,8 @@ public class SecurityConfig {
     @Bean
     JdbcUserDetailsManager users(DataSource dataSource){
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-        jdbcUserDetailsManager.setUsersByUsernameQuery("select name, password, id from users where name = ?;");
-        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select name, password from users where name = ?;");
+        jdbcUserDetailsManager.setUsersByUsernameQuery("select login, password, id from users where login = ?;");
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select login, password from users where login = ?;");
         return jdbcUserDetailsManager;
     }
 
@@ -31,8 +31,9 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .httpBasic().and()
+                //.authorizeRequests(authorize -> authorize.requestMatchers("/delete/**").hasRole("ADMIN").anyRequest().authenticated())
                 .authorizeRequests(auth -> auth.anyRequest().authenticated())
-                //.formLogin(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
                 .build();
     }
 
