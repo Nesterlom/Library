@@ -1,7 +1,7 @@
-package com.library.Book;
+package com.library.book;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.library.Author.Author;
+import com.library.author.Author;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +25,7 @@ import java.util.List;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     private String name;
 
     @ManyToMany(cascade =  CascadeType.REMOVE)
@@ -35,5 +35,5 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
     private List<Author> authors;
-    private Integer year;
+    private int year;
 }

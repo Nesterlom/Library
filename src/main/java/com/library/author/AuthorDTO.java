@@ -1,4 +1,4 @@
-package com.library.Author;
+package com.library.author;
 
 import lombok.Getter;
 import lombok.Setter;

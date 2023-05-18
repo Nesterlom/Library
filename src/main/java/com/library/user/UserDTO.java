@@ -1,4 +1,4 @@
-package com.library.User;
+package com.library.user;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class UserDTO {
     private int id;
-    private ParamsToUpdate param;//param used in update request to define which data we want to update
+    private UserParamsToUpdate param;//param used in update request to define which data we want to update
     private String login;
     private String password;
     private String name;

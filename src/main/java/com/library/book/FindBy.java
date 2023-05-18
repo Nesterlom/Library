@@ -1,4 +1,4 @@
-package com.library.Book;
+package com.library.book;
 
 public enum FindBy {
     NAME,

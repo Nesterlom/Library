@@ -1,6 +1,6 @@
-package com.library.User;
+package com.library.user;
 
-import com.library.Book.Book;
+import com.library.book.Book;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,7 +26,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     private String login;
     private String password;
     private String name;

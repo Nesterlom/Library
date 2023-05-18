@@ -1,4 +1,4 @@
-package com.library.Author;
+package com.library.author;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,14 +15,9 @@ public class AuthorService {
 
     public void save(AuthorDTO authorDto){
         repo.save(convertToEntity(authorDto));
-
-        //Author author = new Author();
-        //repo.save(author);
     }
 
     private Author convertToEntity(AuthorDTO authorDto) throws ParseException {
-        Author author = modelMapper.map(authorDto, Author.class);
-
-        return author;
+        return modelMapper.map(authorDto, Author.class);
     }
 }

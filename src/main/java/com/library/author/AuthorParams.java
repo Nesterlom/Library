@@ -1,6 +1,5 @@
-package com.library.Author;
+package com.library.author;
 
-import com.library.Author.AuthorFields;
 import lombok.Getter;
 import lombok.Setter;
 

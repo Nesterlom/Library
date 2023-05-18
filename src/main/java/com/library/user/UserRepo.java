@@ -1,4 +1,4 @@
-package com.library.User;
+package com.library.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,6 +13,9 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query(value = "select * from users", nativeQuery = true)
     List<User> getUsers();
+
+    @Query(value = "select id from users where login = ?1", nativeQuery = true)
+    int getUserIdByLogin(String login);
 
     @Modifying
     @Query(value = "update users set login = ?2 where login = ?1",nativeQuery = true)

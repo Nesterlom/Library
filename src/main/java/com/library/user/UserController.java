@@ -1,4 +1,4 @@
-package com.library.User;
+package com.library.user;
 
 import io.swagger.annotations.ApiOperation;
 import jakarta.transaction.Transactional;

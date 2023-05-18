@@ -1,4 +1,4 @@
-package com.library.Book;
+package com.library.book;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -28,16 +29,16 @@ public class BookController {
 
     private final BookService bookService;
 
-    @GetMapping()
+    @GetMapping("/all")
     @ApiOperation("Get one page of books")
     public Page<Book> getBooks(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
         return bookRepo.findAll(pageable);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping()
     @ApiOperation("Get page of users saved books")
-    public Page<Book> getSavedBooks(@PathVariable int userId, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        return bookRepo.findAllByUserId(userId, pageable);
+    public Page<Book> getSavedBooks(Principal principal, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        return bookService.getUsersSavedBookByLogin(principal.getName(), pageable);
     }
 
     @GetMapping("/find")
@@ -48,35 +49,33 @@ public class BookController {
     }
 
     @Transactional
-    @PostMapping("/save/{userId}/{bookId}")
+    @PostMapping("/save/")
     @ApiOperation("Save book to users saved books")
-    public void saveBook(@PathVariable Integer userId,
-                         @PathVariable Integer bookId) {
-        bookRepo.saveBook(userId, bookId);
+    public void saveBookToUser(Principal principal, @RequestBody BookDTO bookDto) {
+        bookService.saveBookToUser(principal.getName(), bookDto.getId());
     }
 
     @Transactional
-    @DeleteMapping("/delete/{userId}/{bookId}")
-    @ApiOperation("Delete book from users saved books")
-    public void deleteSavedBook(@PathVariable Integer userId,
-                           @PathVariable Integer bookId) {
-        bookRepo.deleteBook(userId, bookId);
+    @DeleteMapping("/delete/{bookId}")
+    @ApiOperation("Delete your saved book")
+    public void deleteSavedBook(Principal principal, @PathVariable Integer bookId) {
+        bookService.deleteBookFromUserSavedBooks(principal.getName(), bookId);
     }
 
     @Transactional
     @PostMapping("/add")
-    public void addBook(@RequestBody BookParams params){
-        bookService.addBook(params);
+    public void addBook(@RequestBody BookDTO bookDto){
+        bookService.addBook(bookDto);
     }
 
-    @Transactional
-    @DeleteMapping("/delete/{bookName}")
-    public void deleteBook(@PathVariable String bookName){
-        bookRepo.deleteBookByName(bookName);
+    @Transactional// add authorization and give response only to admins
+    @DeleteMapping("/delete")
+    public void deleteBook(@RequestBody BookDTO bookDto){
+        bookRepo.deleteBookById(bookDto.getId());
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update")// add authorization and give response only to admins
     public void updateBook(@RequestBody BookDTO bookDto){
-
+        bookService.update(bookDto);
     }
 }

@@ -1,4 +1,4 @@
-package com.library.Author;
+package com.library.author;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,21 +35,12 @@ public class AuthorController {
         authorService.save(authorDto);
     }
 
-//    @Transactional
-//    @PostMapping("/update")
-//    public void updateAuthor(@RequestParam(value = "field") AuthorFields field,
-//                             @RequestParam(value = "id") int id,
-//                             @RequestParam(value = "param") String param){
     @Transactional
     @PostMapping("/update")
     public void updateAuthor(@RequestBody AuthorParams params){
         switch (params.getField()){
-            case NAME -> {
-                repo.updateName(params.getId(), params.getParam());
-            }
-            case YEAR -> {
-                repo.updateYear(params.getId(), Integer.parseInt(params.getParam()));
-            }
+            case NAME -> repo.updateName(params.getId(), params.getParam());
+            case YEAR -> repo.updateYear(params.getId(), Integer.parseInt(params.getParam()));
         }
     }
 

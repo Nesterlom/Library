@@ -1,4 +1,4 @@
-package com.library.User;
+package com.library.user;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,7 +21,6 @@ public class UserService {
         User user = convertToEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
-
     }
 
     public void update(String currentUserLogin, UserDTO userDto){
